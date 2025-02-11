@@ -103,6 +103,34 @@
       width: 100%;
       bottom: 0;
     }
+       /* Responsive styles for smaller phones */
+       @media (max-width: 768px) {
+      th, td {
+        font-size: 12px;
+      }
+      .play-btn, .dropdown-toggle {
+        padding: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      th, td {
+        font-size: 10px;
+        padding: 5px;
+      }
+      .play-btn, .dropdown-toggle {
+        padding: 6px;
+        font-size: 10px;
+      }
+      nav ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      nav ul li {
+        margin: 5px 0;
+      }
+    }
   </style>
 </head>
 <body>

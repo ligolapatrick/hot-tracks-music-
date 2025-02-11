@@ -144,7 +144,34 @@
   nav ul li a:hover {
     background-color: #4CAF50;
   }
-  
+     /* Responsive styles for smaller phones */
+     @media (max-width: 768px) {
+      th, td {
+        font-size: 12px;
+      }
+      .play-btn, .dropdown-toggle {
+        padding: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      th, td {
+        font-size: 10px;
+        padding: 5px;
+      }
+      .play-btn, .dropdown-toggle {
+        padding: 6px;
+        font-size: 10px;
+      }
+      nav ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      nav ul li {
+        margin: 5px 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -163,12 +190,7 @@
             <a href="featured-artists.html">Featured Artists</a>
             <a href="music-genres.html">Music Genres</a>
             <a href="new-releases.html">New Releases</a>
-            <a href="events-concerts.html">Events & Concerts</a>
-            <a href="music-news.html">Music News</a>
-            <a href="playlists.html">Playlists</a>
-            <a href="artist-interviews.html">Artist Interviews</a>
-            <a href="music-reviews.html">Music Reviews</a>
-            <a href="community-forum.html">Community Forum</a>
+            <a href="searching.html">search</a>
           </div>
         </li>
       </ul>

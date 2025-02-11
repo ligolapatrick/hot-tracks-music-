@@ -6,7 +6,6 @@
   <title>Hot Music Tracks</title>
   <link rel="stylesheet" href="css/styles.css">
   <style>
-    
     table {
       width: 100%;
       border-collapse: collapse;
@@ -30,6 +29,35 @@
     .play-btn {
       margin: 5px;
     }
+
+    /* Responsive styles for smaller phones */
+    @media (max-width: 768px) {
+      th, td {
+        font-size: 12px;
+      }
+      .play-btn, .dropdown-toggle {
+        padding: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      th, td {
+        font-size: 10px;
+        padding: 5px;
+      }
+      .play-btn, .dropdown-toggle {
+        padding: 6px;
+        font-size: 10px;
+      }
+      nav ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      nav ul li {
+        margin: 5px 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -51,7 +79,7 @@
             <a href="music-genres.html">Music Genres</a>
             <a href="new-releases.html">New Releases</a>
             <a href="upload.html">Upload</a>
-            <a href="admin-control.html">admin</a>
+            <a href="admin-control.html">Admin</a>
           </div>
         </li>
       </ul>
