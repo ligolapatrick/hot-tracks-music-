@@ -147,18 +147,24 @@ app.get('/admin-control.html', (req, res) => {
   }
 });
 
-
 app.post('/register', async (req, res) => {
   const { username, password, registrationId } = req.body;
   if (registrationId !== '4123trecks') {
     return res.status(400).send('Invalid registration ID.');
   }
 
+  const user = await User.findOne({ where: { username } });
+  if (user) {
+    return res.status(400).send('User is already registered.');
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    await User.create({ username, password: hashedPassword, registrationId, isAdmin: true });
-    res.redirect('/login.html');
+    await User.create({ username, password: hashedPassword, registrationId, isAdmin: false });
+    req.session.userId = user.id;
+    req.session.isAdmin = user.isAdmin;
+    res.redirect('/');
   } catch (error) {
     console.error('Error registering user:', error);
     if (error.name === 'SequelizeUniqueConstraintError') {
@@ -168,12 +174,17 @@ app.post('/register', async (req, res) => {
     }
   }
 });
+
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
     const user = await User.findOne({ where: { username } });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      return res.status(401).send('User not registered. Please register first.');
+    }
+
+    if (!(await bcrypt.compare(password, user.password))) {
       return res.status(401).send('Invalid username or password.');
     }
 
@@ -185,7 +196,6 @@ app.post('/login', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
 
 app.post('/upload', (req, res) => {
   if (!req.session.isAdmin) {
@@ -271,6 +281,29 @@ app.post('/delete-music/:id', async (req, res) => {
     }
   } catch (error) {
     console.error('Error deleting music:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Search endpoint with filters
+app.get('/api/search', async (req, res) => {
+  const { title, artist, genre, releaseDate, popularity } = req.query;
+
+  const query = {
+    where: {},
+  };
+
+  if (title) query.where.title = { [Sequelize.Op.like]: `%${title}%` };
+  if (artist) query.where.artist = { [Sequelize.Op.like]: `%${artist}%` };
+  if (genre) query.where.genre = genre;
+  if (releaseDate) query.where.releaseDate = releaseDate;
+  if (popularity) query.order = [['downloads', popularity.toUpperCase()]];
+
+  try {
+    const results = await Music.findAll(query);
+    res.json(results);
+  } catch (error) {
+    console.error('Error searching music:', error);
     res.status(500).send('Internal Server Error');
   }
 });

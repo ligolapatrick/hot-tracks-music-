@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Search - Hot Music Tracks</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    header, nav, footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+    }
+    main {
+      padding: 20px;
+    }
+    .search-form {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .search-form label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .search-form input, .search-form select, .search-form button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .search-results {
+      margin-top: 20px;
+    }
+    .search-results h3 {
+      margin-bottom: 10px;
+    }
+    .search-results table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .search-results th, .search-results td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .search-results th {
+      background-color: #f4f4f4;
+    }
+    /* Responsive styles for smaller phones */
+    @media (max-width: 768px) {
+      .search-form input, .search-form select, .search-form button {
+        font-size: 14px;
+      }
+      .search-results th, .search-results td {
+        font-size: 12px;
+      }
+    }
+    @media (max-width: 480px) {
+      .search-form input, .search-form select, .search-form button {
+        font-size: 12px;
+        padding: 8px;
+      }
+      .search-results th, .search-results td {
+        font-size: 10px;
+        padding: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="search.html">Search</a></li>
+        <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
+        <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
+        <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
+        <li>
+          <a href="#" class="dropdown-toggle">Menu &#x25BC;</a>
+          <div class="dropdown-menu">
+            <a href="register.html">Register</a>
+            <a href="login.html">Login</a>
+            <a href="top-charts.html">Top Charts</a>
+            <a href="featured-artists.html">Featured Artists</a>
+            <a href="music-genres.html">Music Genres</a>
+            <a href="new-releases.html">New Releases</a>
+            <a href="upload.html">Upload</a>
+            <a href="admin-control.html">Admin</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="search-form">
+      <h2>Advanced Search</h2>
+      <form id="searchForm">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title">
+
+        <label for="artist">Artist:</label>
+        <input type="text" id="artist" name="artist">
+
+        <label for="genre">Genre:</label>
+        <select id="genre" name="genre">
+          <option value="">--Select Genre--</option>
+          <option value="pop">Pop</option>
+          <option value="rock">Rock</option>
+          <option value="hiphop">Hip-Hop</option>
+          <option value="jazz">Jazz</option>
+          <option value="classical">Classical</option>
+        </select>
+
+        <label for="releaseDate">Release Date:</label>
+        <input type="date" id="releaseDate" name="releaseDate">
+
+        <button type="submit">Search</button>
+      </form>
+    </section>
+
+    <section class="search-results" id="searchResults">
+      <h3>Search Results</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Genre</th>
+            <th>Release Date</th>
+            <th>Downloads</th>
+            <th>Preview</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="resultsList">
+          <!-- Search results will go here -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Hot Music Tracks. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const query = new URLSearchParams(formData).toString();
+      fetch('/search?' + query)
+        .then(response => response.json())
+        .then(data => {
+          const resultsList = document.getElementById('resultsList');
+          resultsList.innerHTML = '';
+          data.forEach(music => {
+            const resultRow = document.createElement('tr');
+            resultRow.innerHTML = `
+              <td>${music.title}</td>
+              <td>${music.artist}</td>
+              <td>${music.genre}</td>
+              <td>${music.releaseDate}</td>
+              <td>${music.downloads}</td>
+              <td>
+                <audio id="audio-${music.filename}" controls>
+                  <source src="uploads/${music.filename}" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                </audio>
+              </td>
+              <td>
+                        <button class="play-btn" onclick="playPause('${music.filename}')">Play/Pause</button>
+                <a href="/download/${music.filename}" download>Download</a>
+              </td>
+            `;
+            resultsList.appendChild(resultRow); 
+           });
+         })
+         .catch(error =>  console.error('Error fetching search results:', error)); 
+        });
+
+    function playPause(filename) {
+      const audio = document.getElementById(`audio-${filename}`);
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+  </script>
+</body>
+</html>

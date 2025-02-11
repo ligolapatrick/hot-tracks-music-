@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Most Downloaded Songs</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    audio {
+      width: 100%;
+    }
+
+    .play-btn {
+      margin: 5px;
+    }
+       /* Responsive styles for smaller phones */
+       @media (max-width: 768px) {
+      th, td {
+        font-size: 12px;
+      }
+      .play-btn, .dropdown-toggle {
+        padding: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      th, td {
+        font-size: 10px;
+        padding: 5px;
+      }
+      .play-btn, .dropdown-toggle {
+        padding: 6px;
+        font-size: 10px;
+      }
+      nav ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      nav ul li {
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
+        <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
+        <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="most-downloaded-songs">
+      <h2>Most Downloaded Songs</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Genre</th>
+            <th>Release Date</th>
+            <th>Downloads</th>
+            <th>Preview</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="music-list">
+          <!-- Most downloaded songs will go here -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Hot Music Tracks. All rights reserved.</p>
+  </footer>
+  
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/uploads')
+      .then(response => response.json())
+      .then(data => {
+        const musicList = document.getElementById('music-list');
+
+        // Sort music by number of downloads in descending order
+        data.sort((a, b) => b.downloads - a.downloads);
+
+        data.forEach(music => {
+          if (music.downloads > 0) { // Only show music with downloads
+            const musicRow = document.createElement('tr');
+            musicRow.innerHTML = `
+              <td>${music.title}</td>
+              <td>${music.artist}</td>
+              <td>${music.genre}</td>
+              <td>${music.releaseDate}</td>
+              <td>${music.downloads}</td>
+              <td>
+                <audio id="audio-${music.filename}" controls>
+                  <source src="uploads/${music.filename}" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                </audio>
+              </td>
+              <td>
+                <button class="play-btn" onclick="playPause('${music.filename}')">Play/Pause</button>
+                <a href="/download/${music.filename}" download>Download</a>
+              </td>
+            `;
+            musicList.appendChild(musicRow);
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching music:', error));
+  });
+
+  function playPause(filename) {
+    const audio = document.getElementById(`audio-${filename}`);
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  }
+</script>
+</body>
+</html>

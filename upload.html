@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Music</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
+        <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
+        <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="upload">
+      <h2>Upload Your Music</h2>
+      <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="musicFile" accept=".mp3, .wav" required>
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="artist" placeholder="Artist" required>
+        <select name="genre" required>
+          <option value="" disabled selected>Select Genre</option>
+          <option value="Pop">Pop</option>
+          <option value="Rock">Rock</option>
+          <option value="Hip-Hop">Hip-Hop</option>
+          <option value="Jazz">Jazz</option>
+          <option value="Amapiano">Amapiano</option>
+          <option value="Country">Country</option>
+          <option value="Electronic">Electronic</option>
+          <option value="R&B">R&B</option>
+          <option value="Reggae">Reggae</option>
+          <option value="Blues">Blues</option>
+          <option value="Afro">Afro</option>
+          <option value="Folk">Folk</option>
+          <option value="Trap">Trap</option>
+          <option value="K-Pop">K-Pop</option>
+          <option value="Dance">Dance</option>
+        </select>
+        <input type="date" name="releaseDate" placeholder="Release Date" required>
+        <button type="submit">Upload</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Hot Music Tracks. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      var formData = new FormData(this);
+
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(result => {
+        alert('Upload successful!');
+        window.location.href = 'new-releases.html'; // Redirect to new releases page after upload
+      })
+      .catch(error => {
+        console.error('Error uploading file:', error);
+        alert('Error uploading file');
+      });
+    });
+  </script>
+</body>
+</html>
