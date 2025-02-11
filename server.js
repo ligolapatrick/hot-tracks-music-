@@ -161,22 +161,31 @@ app.post('/register', async (req, res) => {
     res.redirect('/login.html');
   } catch (error) {
     console.error('Error registering user:', error);
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      res.status(400).send('Username or registration ID already exists.');
+    } else {
+      res.status(500).send('Internal Server Error');
+    }
+  }
+});
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({ where: { username } });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).send('Invalid username or password.');
+    }
+
+    req.session.userId = user.id;
+    req.session.isAdmin = user.isAdmin;
+    res.redirect('/');
+  } catch (error) {
+    console.error('Error logging in:', error);
     res.status(500).send('Internal Server Error');
   }
 });
 
-app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ where: { username } });
-
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).send('Invalid username or password.');
-  }
-
-  req.session.userId = user.id;
-  req.session.isAdmin = user.isAdmin;
-  res.redirect('/');
-});
 
 app.post('/upload', (req, res) => {
   if (!req.session.isAdmin) {
