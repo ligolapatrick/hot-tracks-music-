@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Releases</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html">Upload</a></li>
+        <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
+        <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
+        <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="new-releases">
+      <h2>New Releases</h2>
+      <div class="music-list">
+        <!-- New releases music entries will go here -->
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Hot Music Tracks. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/uploads')
+        .then(response => response.json())
+        .then(data => {
+          const musicList = document.querySelector('.music-list');
+          const oneMonthAgo = new Date();
+          oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+          data.forEach(music => {
+            const releaseDate = new Date(music.releaseDate);
+            if (releaseDate >= oneMonthAgo) {
+              const musicDiv = document.createElement('div');
+              musicDiv.innerHTML = `
+                <h3>${music.title}</h3>
+                <p>Artist: ${music.artist}</p>
+                <p>Genre: ${music.genre}</p>
+                <p>Release Date: ${music.releaseDate}</p>
+                <p>Downloads: ${music.downloads}</p>
+                <audio id="audio-${music.filename}" controls>
+                  <source src="uploads/${music.filename}" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                </audio>
+                <button onclick="playPause('${music.filename}')">Play/Pause</button>
+                <a href="/download/${music.filename}" download>Download</a>
+              `;
+              musicList.appendChild(musicDiv);
+            }
+          });
+        })
+        .catch(error => console.error('Error fetching music:', error));
+    });
+
+    function playPause(filename) {
+      const audio = document.getElementById(`audio-${filename}`);
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+
+/* Hero Image Section */
+.hero-image {
+    background-image: url('images/Matches.jpg'); /* Update this with the path to your hero background image */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.cta-button {
+    background-color: #00b4d8;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 18px;
+}
+
+.cta-button:hover {
+    background-color: #0077b6;
+}
+
+/* Form Sections */
+.form-section {
+    background-image: url('/images/Matches.jpg'); /* Your path */
+    background-size: cover;
+    background-position: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.form-background {
+    background-color: rgba(0, 0, 0, 0.7); /* Optional: to make text more readable */
+    padding: 20px;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    width: 300px;
+}
+
+/* Form Elements */
+.form-section form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.form-section label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-section input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form-section button {
+    width: 100%;
+    padding: 10px;
+    background-color: #00b4d8;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.form-section button:hover {
+    background-color: #0077b6;
+}
+
+header {
+
+     background-image: url('images/LoveConnect logo.png'); /* Update this with the path to your hero background image */
+    background-size: cover;
+    color: white;
+    text-align: center;
+
+}
+
+.dashboard {
+    display: flex;
+    justify-content: space-between;
+    padding: 76px;
+}
+
+.left-side,
+.right-side {
+    width: 48%;
+}
+
+.category {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.category-header {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 00px;
+    text-align: center;
+    width: 100%;
+}
+
+.category h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.single-card {
+    display: flex;
+    justify-content: center;
+    margin-top: 00px; /* Add some space for the header */
+}
+
+.user-card {
+    background-color: white;
+    border: 1px solid #ccc;
+    margin: 10px;
+    text-align: center;
+    flex-basis: 45%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px; /* Enhance length */
+}
+
+.user-card img {
+    width: 600px;
+    height: 500px;
+    border-radius: 35px; /* Rounded corners */
+    object-fit: cover;
+    box-shadow: none; /* Remove box shadow from the image */
+}
+
+.user-card p {
+    margin: 20px 0 0;
+    color: #333;
+}
