@@ -5,74 +5,166 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload Music</title>
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 10px 0;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    nav ul li {
+      margin: 0 15px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    h2 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    form {
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #333;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      nav ul {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      nav ul li {
+        margin: 5px 0;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
     <nav>
       <ul>
         <li><a href="index.html">Home</a></li>
-        <li><a href="upload.html">Upload</a></li>
         <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
         <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
         <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
+        <li><a href="top-charts.html">Top Charts</a></li>
       </ul>
     </nav>
   </header>
 
   <main>
-    <section id="upload">
-      <h2>Upload Your Music</h2>
-      <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="musicFile" accept=".mp3, .wav" required>
-        <input type="text" name="title" placeholder="Title" required>
-        <input type="text" name="artist" placeholder="Artist" required>
-        <select name="genre" required>
-          <option value="" disabled selected>Select Genre</option>
-          <option value="Pop">Pop</option>
-          <option value="Rock">Rock</option>
-          <option value="Hip-Hop">Hip-Hop</option>
-          <option value="Jazz">Jazz</option>
-          <option value="Amapiano">Amapiano</option>
-          <option value="Country">Country</option>
-          <option value="Electronic">Electronic</option>
-          <option value="R&B">R&B</option>
-          <option value="Reggae">Reggae</option>
-          <option value="Blues">Blues</option>
-          <option value="Afro">Afro</option>
-          <option value="Folk">Folk</option>
-          <option value="Trap">Trap</option>
-          <option value="K-Pop">K-Pop</option>
-          <option value="Dance">Dance</option>
-        </select>
-        <input type="date" name="releaseDate" placeholder="Release Date" required>
-        <button type="submit">Upload</button>
-      </form>
-    </section>
+    <h2>Upload Music</h2>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" required>
+
+      <label for="artist">Artist</label>
+      <input type="text" id="artist" name="artist" required>
+
+      <label for="genre">Genre</label>
+      <select id="genre" name="genre" required>
+        <option value="Pop">Pop</option>
+        <option value="Rock">Rock</option>
+        <option value="Hip-Hop">Hip-Hop</option>
+        <option value="Jazz">Jazz</option>
+        <option value="Classical">Classical</option>
+        <option value="Gospel">Gospel</option>
+        <option value="Country">Country</option>
+        <option value="R&B">R&B</option>
+        <option value="Reggae">Reggae</option>
+        <option value="Blues">Blues</option>
+        <option value="Afro">Afro</option>
+        <option value="Amapiano">Amapiano</option>
+      </select>
+
+      <label for="releaseDate">Release Date</label>
+      <input type="date" id="releaseDate" name="releaseDate" required>
+
+      <label for="musicFile">Music File (MP3 or WAV)</label>
+      <input type="file" id="musicFile" name="musicFile" accept="audio/mpeg, audio/wav" required>
+
+      <label for="artwork">Artwork (JPEG or PNG)</label>
+      <input type="file" id="artwork" name="artwork" accept="image/jpeg, image/png">
+
+      <button type="submit">Upload</button>
+    </form>
   </main>
-
-  <footer>
-    <p>&copy; 2025 Hot Music Tracks. All rights reserved.</p>
-  </footer>
-
   <script>
-    document.getElementById('uploadForm').addEventListener('submit', function (event) {
-      event.preventDefault();
-      var formData = new FormData(this);
-
-      fetch('/upload', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.text())
-      .then(result => {
-        alert('Upload successful!');
-        window.location.href = 'new-releases.html'; // Redirect to new releases page after upload
-      })
-      .catch(error => {
-        console.error('Error uploading file:', error);
-        alert('Error uploading file');
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.querySelector('form');
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+  
+        const formData = new FormData(form);
+        try {
+          const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData
+          });
+  
+          if (response.ok) {
+            alert('Upload successful!');
+            form.reset(); // Clear the form
+          } else {
+            const errorText = await response.text();
+            alert('Upload failed: ' + errorText);
+          }
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          alert('Upload failed: ' + error.message);
+        }
       });
     });
-  </script>
+  </script>  
 </body>
 </html>
