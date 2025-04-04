@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
-  <link rel="stylesheet" href="css/styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,62 +12,15 @@
       background: url('images/logo and hero image for a music app.png') no-repeat center center fixed;
       background-size: cover;
     }
-    .navbar {
-      background-color: rgba(0, 0, 0, 0.8);
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-    }
-    .navbar img {
-      height: 50px;
-    }
-    .nav-logo, .nav-contact, .nav-links {
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .nav-contact span {
-      margin: 0 10px;
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .nav-links {
-      list-style: none;
-      padding: 0;
-      gap: 40px;
-    }
-    .nav-links li {
-      display: inline;
-      margin: 0 10px;
-    }
-    .nav-links a {
-      color: white;
-      text-decoration: none;
-    }
-    .hero {
-      text-align: center;
-      padding: 100px 20px;
-      color: white;
-    }
-
-    .hero h1 {
-      font-size: 50px;
-      margin-bottom: 20px;
-    }
-
-    .hero p {
-      font-size: 24px;
-      margin-bottom: 40px;
-    }
 
     .form-container {
       background: rgba(255, 255, 255, 0.8);
       max-width: 400px;
-      margin: 0 auto;
+      margin: 100px auto;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
     }
 
     form input, form button {
@@ -78,11 +30,10 @@
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      box-sizing: border-box;  /* Ensure padding is included in width */
     }
 
     form button {
-      background-color: #687468;
+      background-color: #4CAF50;
       color: white;
       border: none;
       cursor: pointer;
@@ -105,43 +56,17 @@
     footer p {
       margin: 5px 0;
     }
-
-    footer .contact-info {
-      font-size: 14px;
-      margin-top: 10px;
-    }
   </style>
 </head>
 <body>
-    <body>
-        <!-- Navigation Bar -->
-        <nav class="navbar">
-            <div class="nav-logo">
-                <img src="images/professional logo for a music app.png" alt="LoveConnect Logo">
-            </div>
-            <div class="nav-contact">
-                <span><img src="images/Limav-Flat-Gradient-Social-Whatsapp.512.png" alt="WhatsApp Icon"> 0888202246</span>
-                <span><img src="images/Graphicloads-100-Flat-Email-2.256 (1).png" alt="Email Icon"> ligolapatrick61@gmail.com</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="login.html">Home</a></li>
-                <li><a href="about-app.html">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="registration.html">Register</a></li>
-                <li><a href="login.html">Login</a></li>
-            </ul>
-        </nav>
-
-  <div class="hero">
-    <h1>Join Hot Music Tracks</h1>
-    <p>Create an account to explore and share your favorite music.</p>
-  </div>
+  <header>
+    <h1>Register for Hot Music Tracks</h1>
+  </header>
 
   <div class="form-container">
     <form action="/register" method="POST">
       <input type="text" name="username" placeholder="Username" required>
       <input type="password" name="password" placeholder="Password" required>
-      <input type="text" name="registrationId" placeholder="Registration ID" required>
       <button type="submit">Register</button>
       <p>Already have an account? <a href="login.html">Login here</a></p>
     </form>

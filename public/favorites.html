@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favorites</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: #222;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: -250px;
+      padding-top: 20px;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: white;
+      padding: 15px 20px;
+      font-size: 18px;
+      display: block;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #444;
+    }
+
+    .content {
+      margin-left: 0;
+      padding: 20px;
+      width: 100%;
+      transition: margin-left 0.3s ease;
+    }
+
+    .content.shift {
+      margin-left: 250px;
+    }
+
+    .menu-btn {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 18px;
+      cursor: pointer;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1001;
+    }
+
+    .menu-btn:hover {
+      background-color: #444;
+    }
+
+    .player-controls {
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .player-controls button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .player-controls button:hover {
+      background-color: #45a049;
+    }
+
+    .song-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .song-card {
+      width: 250px;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      text-align: center;
+      padding: 20px;
+      cursor: pointer;
+    }
+
+    .song-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .song-card h3 {
+      margin: 15px 0;
+      font-size: 18px;
+    }
+
+    .song-card audio {
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+      }
+
+      .content.shift {
+        margin-left: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .song-card {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Your Favorite Songs</h1>
+  </header>
+
+  <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <a href="index.html">Home</a>
+      <a href="upload.html">Upload Music</a>
+      <a href="featured-artists.html">Artist</a>
+      <a href="songs-of-the-week.html">Songs of the Week</a>
+      <a href="most-downloaded-songs.html">Most Downloaded Songs</a>
+    </nav>
+
+    <div class="content" id="content">
+      <div class="player-controls">
+        <button onclick="playAll()">▶️ Play All</button>
+        <button onclick="toggleShuffle()">🔀 Shuffle</button>
+        <button onclick="toggleRepeat()">🔁 Repeat</button>
+      </div>
+
+      <div class="song-list" id="song-list">
+        <!-- Favorite songs will be dynamically rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let songs = [];
+    let currentSongIndex = 0;
+    let shuffle = false;
+    let repeat = false;
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('content');
+      sidebar.classList.toggle('open');
+      content.classList.toggle('shift');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/favorites/1') // Fetch favorites for userId = 1
+        .then(response => response.json())
+        .then(data => {
+          const songList = document.getElementById('song-list');
+          songs = data.map(favorite => favorite.Music);
+
+          songs.forEach((song, index) => {
+            const songCard = createSongCard(song, index);
+            songList.appendChild(songCard);
+          });
+        })
+        .catch(error => console.error('Error fetching favorites:', error));
+    });
+
+    function createSongCard(song, index) {
+      const card = document.createElement('div');
+      card.classList.add('song-card');
+      card.onclick = () => selectTrack(index); // Play selected track
+      card.innerHTML = `
+        <img src="/files/${song.id}?type=artwork" alt="${song.title}">
+        <h3>${song.title}</h3>
+        <audio id="audio-${index}" controls>
+          <source src="/files/${song.id}" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+      `;
+      return card;
+    }
+
+    function selectTrack(index) {
+      currentSongIndex = index;
+      playSong();
+    }
+
+    function playSong() {
+      const audio = document.getElementById(`audio-${currentSongIndex}`);
+      audio.play();
+    }
+
+    function playAll() {
+      currentSongIndex = 0;
+      playSong();
+      const audio = document.getElementById(`audio-${currentSongIndex}`);
+      audio.onended = () => {
+        if (shuffle) {
+          currentSongIndex = Math.floor(Math.random() * songs.length);
+        } else {
+          currentSongIndex = (currentSongIndex + 1) % songs.length;
+        }
+
+        if (!repeat && currentSongIndex === 0) return; // Stop if not repeating
+        playSong();
+      };
+    }
+
+    function toggleShuffle() {
+      shuffle = !shuffle;
+      alert(`Shuffle is now ${shuffle ? 'ON' : 'OFF'}`);
+    }
+
+    function toggleRepeat() {
+      repeat = !repeat;
+      alert(`Repeat is now ${repeat ? 'ON' : 'OFF'}`);
+    }
+  </script>
+</body>
+</html>

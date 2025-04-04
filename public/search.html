@@ -3,150 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search Music</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <title>Search</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      background-color: #f9f9f9;
+      color: #333;
     }
 
     header {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 0;
-      text-align: center;
-    }
-
-    nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-    }
-
-    nav ul li {
-      margin: 0 15px;
-    }
-
-    nav ul li a {
-      color: #1a1717;
-      text-decoration: none;
-      font-size: 18px;
-    }
-
-    main {
-      padding: 20px;
-      text-align: center;
-    }
-
-    .search-container {
-      max-width: 500px;
-      margin: 0 auto;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-bottom: 20px;
-    }
-
-    .music-list {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .music-item {
-      background-color: white;
-      padding: 10px;
-      margin: 10px 0;
-      width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    .music-item h3, .music-item p {
-      margin: 0;
-    }
-
-    .music-item audio {
-      margin-top: 10px;
-      width: 100%;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
       background-color: #333;
       color: white;
-      position: fixed;
+      text-align: center;
+      padding: 10px 0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-bar {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+    }
+
+    .search-bar button {
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .search-bar button:hover {
+      background-color: #45a049;
+    }
+
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    audio {
       width: 100%;
-      bottom: 0;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Search Music</h1>
+    <h1>Search for Songs or Artists</h1>
   </header>
-  <nav>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="upload.html">Upload</a></li>
-      <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
-      <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
-      <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
-      <li><a href="top-charts.html">Top Charts</a></li>
-    </ul>
-  </nav>
 
-  <main>
-    <div class="search-container">
-      <input type="text" class="search-input" id="search-input" placeholder="Search for music...">
-      <div class="music-list" id="music-list">
-        <!-- Search results will go here -->
-      </div>
-    </div>
-  </main>
+  <div class="search-bar">
+    <form id="search-form">
+      <input type="text" id="search-query" name="query" placeholder="Enter song or artist name..." required>
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  <table id="search-results-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Artist</th>
+        <th>Genre</th>
+        <th>Audio</th>
+      </tr>
+    </thead>
+    <tbody id="search-results">
+      <!-- Search results will be dynamically populated -->
+    </tbody>
+  </table>
+
   <script>
-    document.getElementById('search-input').addEventListener('input', function() {
-      const query = this.value.toLowerCase();
-      fetch('/uploads')
+    document.getElementById('search-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const query = document.getElementById('search-query').value;
+
+      fetch(`/search?query=${query}`)
         .then(response => response.json())
         .then(data => {
-          const filteredMusic = data.filter(music => 
-            music.title.toLowerCase().includes(query) ||
-            music.artist.toLowerCase().includes(query) ||
-            music.genre.toLowerCase().includes(query)
-          );
+          const resultsTable = document.getElementById('search-results');
+          resultsTable.innerHTML = ''; // Clear existing results
 
-          const musicList = document.getElementById('music-list');
-          musicList.innerHTML = '';
-
-          filteredMusic.forEach(music => {
-            const musicItem = document.createElement('div');
-            musicItem.classList.add('music-item');
-            musicItem.innerHTML = `
-              <h3>${music.title}</h3>
-              <p>Artist: ${music.artist}</p>
-              <p>Genre: ${music.genre}</p>
-              <p>Release Date: ${music.releaseDate}</p>
-              <audio controls>
-                <source src="uploads/${music.filename}" type="audio/mpeg">
-                Your browser does not support the audio element.
-              </audio>
+          data.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${item.title}</td>
+              <td>${item.artist}</td>
+              <td>${item.genre}</td>
+              <td>
+                <audio controls>
+                  <source src="/files/${item.id}" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                </audio>
+              </td>
             `;
-            musicList.appendChild(musicItem);
+            resultsTable.appendChild(row);
           });
         })
-        .catch(error => console.error('Error fetching music:', error));
+        .catch(error => console.error('Error fetching search results:', error));
     });
   </script>
 </body>

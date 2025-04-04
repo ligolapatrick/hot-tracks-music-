@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lyrics Synchronization</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      height: 60px;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      font-size: 16px;
+      margin: 5px 0;
+    }
+
+    ul li span {
+      font-weight: bold;
+    }
+
+    .lyrics-review {
+      margin-top: 20px;
+    }
+
+    .lyrics-review h3 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Lyrics Synchronization</h1>
+  </header>
+
+  <div class="container">
+    <h2>Enter and Synchronize Lyrics</h2>
+    <audio id="audio-player" controls>
+      <source src="/files/song.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    <textarea id="lyric-input" placeholder="Enter lyrics here..."></textarea>
+    <button onclick="setTimestamp()">Set Timestamp</button>
+    <button onclick="saveLyrics()">Save Lyrics</button>
+
+    <script>
+      function saveLyrics() {
+        const songId = 1; // Replace dynamically
+        fetch('/lyrics/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ songId, lyrics }),
+        })
+          .then(response => {
+            if (response.ok) {
+              alert('Lyrics saved successfully!');
+            } else {
+              alert('Failed to save lyrics.');
+            }
+          })
+          .catch(error => console.error('Error saving lyrics:', error));
+      }
+    </script>
+    
+    <div class="lyrics-review">
+      <h3>Synced Lyrics</h3>
+      <ul id="lyric-list">
+        <!-- Synchronized lyrics will be displayed here -->
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const lyrics = []; // Array to store lyrics with timestamps
+
+    function setTimestamp() {
+      const audioPlayer = document.getElementById('audio-player');
+      const lyricInput = document.getElementById('lyric-input');
+      const lyricList = document.getElementById('lyric-list');
+      
+      // Get the current timestamp and lyric line
+      const timestamp = audioPlayer.currentTime;
+      const lyric = lyricInput.value;
+
+      if (lyric.trim() === '') {
+        alert('Please enter a lyric line before setting a timestamp.');
+        return;
+      }
+
+      // Add lyric and timestamp to the lyrics array
+      lyrics.push({ line: lyric, timestamp });
+
+      // Display the synchronized lyric
+      const li = document.createElement('li');
+      li.innerHTML = `<span>(${timestamp.toFixed(2)}s)</span> ${lyric}`;
+      lyricList.appendChild(li);
+
+      // Clear the input field
+      lyricInput.value = '';
+    }
+  </script>
+</body>
+</html>

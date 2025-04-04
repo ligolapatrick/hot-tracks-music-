@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Library</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+      width: 250px;
+      background-color: #222;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: -250px;
+      padding-top: 20px;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: white;
+      padding: 15px 20px;
+      font-size: 18px;
+      display: block;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #444;
+    }
+
+    .content {
+      margin-left: 0;
+      padding: 20px;
+      width: 100%;
+      transition: margin-left 0.3s ease;
+    }
+
+    .content.shift {
+      margin-left: 250px;
+    }
+
+    /* Menu Button */
+    .menu-btn {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 18px;
+      cursor: pointer;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1001;
+    }
+
+    .menu-btn:hover {
+      background-color: #444;
+    }
+
+    /* Song List Styling */
+    .song-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .song-card {
+      width: 250px;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .song-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .song-card h3 {
+      margin: 15px 0;
+      font-size: 18px;
+    }
+
+    .song-card audio {
+      width: 100%;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+      }
+
+      .content.shift {
+        margin-left: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .menu-btn {
+        padding: 8px 10px;
+        font-size: 16px;
+      }
+
+      .sidebar {
+        width: 200px;
+      }
+
+      .content {
+        margin-left: 0;
+      }
+
+      .song-card {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Library</h1>
+  </header>
+
+  <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <a href="index.html">Home</a>
+      <a href="upload.html">Upload Music</a>
+      <a href="songs-of-the-week.html">Songs of the Week</a>
+      <a href="most-downloaded-songs.html">Most Downloaded Songs</a>
+      <a href="library.html">My Library</a>
+      <a href="playlists.html">Playlists</a>
+      <a href="favorites.html">Favorites</a>
+    </nav>
+
+    <div class="content" id="content">
+      <h2>Your Saved Music</h2>
+      <div class="song-list" id="song-list">
+        <!-- Songs will be dynamically rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('content');
+      sidebar.classList.toggle('open');
+      content.classList.toggle('shift');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/library/1') // Fetch library for userId = 1
+        .then(response => response.json())
+        .then(data => {
+          const songList = document.getElementById('song-list');
+
+          const { favorites, playlists } = data;
+
+          favorites.forEach(song => {
+            const songCard = createSongCard(song.Music);
+            songList.appendChild(songCard);
+          });
+
+          playlists.forEach(playlist => {
+            playlist.PlaylistItems.forEach(item => {
+              const songCard = createSongCard(item.Music);
+              songList.appendChild(songCard);
+            });
+          });
+        })
+        .catch(error => console.error('Error fetching library:', error));
+    });
+
+    function createSongCard(song) {
+      const card = document.createElement('div');
+      card.classList.add('song-card');
+      card.innerHTML = `
+        <img src="/files/${song.id}?type=artwork" alt="${song.title}">
+        <h3>${song.title}</h3>
+        <audio controls>
+          <source src="/files/${song.id}" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <button onclick="playSong(${song.id})">Play</button>
+      `;
+      return card;
+    }
+
+    function playSong(songId) {
+      const audio = document.querySelector(`audio source[src*="${songId}"]`).parentElement;
+      audio.play();
+    }
+  </script>
+</body>
+</html>

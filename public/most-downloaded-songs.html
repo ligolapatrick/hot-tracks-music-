@@ -4,16 +4,100 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Most Downloaded Songs</title>
-  <link rel="stylesheet" href="css/styles.css">
   <style>
-    table {
+    /* Base Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+      width: 250px;
+      background-color: #222;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: -250px; /* Hidden by default */
+      padding-top: 20px;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.open {
+      left: 0; /* Show when open */
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: white;
+      padding: 15px 20px;
+      font-size: 18px;
+      display: block;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #444;
+    }
+
+    .content {
+      margin-left: 0;
+      padding: 20px;
       width: 100%;
+      transition: margin-left 0.3s ease; /* Align content when sidebar is open */
+    }
+
+    .content.shift {
+      margin-left: 250px; /* Move content when sidebar is open */
+    }
+
+    /* Menu Button */
+    .menu-btn {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 18px;
+      cursor: pointer;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1001;
+    }
+
+    .menu-btn:hover {
+      background-color: #444;
+    }
+
+    table {
+      width: 90%;
+      margin: 20px auto;
       border-collapse: collapse;
-      margin-top: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     th, td {
-      padding: 10px;
+      padding: 15px;
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
@@ -22,127 +106,206 @@
       background-color: #f4f4f4;
     }
 
+    img {
+      width: 100px;
+      height: auto;
+      border-radius: 5px;
+    }
+
     audio {
       width: 100%;
     }
 
-    .play-btn {
-      margin: 5px;
-    }
-       /* Responsive styles for smaller phones */
-       @media (max-width: 768px) {
-      th, td {
-        font-size: 12px;
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
+      table {
+        font-size: 14px;
       }
-      .play-btn, .dropdown-toggle {
-        padding: 8px;
+
+      .sidebar {
+        width: 200px;
+      }
+
+      .content.shift {
+        margin-left: 200px;
       }
     }
 
     @media (max-width: 480px) {
+      table {
+        font-size: 12px;
+      }
+
       th, td {
-        font-size: 10px;
-        padding: 5px;
+        padding: 10px;
       }
-      .play-btn, .dropdown-toggle {
-        padding: 6px;
-        font-size: 10px;
-      }
-      nav ul {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      nav ul li {
-        margin: 5px 0;
+
+      img {
+        width: 80px;
       }
     }
+    .pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  gap: 10px;
+}
+
+.pagination-controls button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:hover:not([disabled]) {
+  background-color: #45a049;
+}
+
+.pagination-controls button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination-controls span {
+  font-size: 16px;
+  color: #333;
+}
+
   </style>
 </head>
 <body>
   <header>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="upload.html">Upload</a></li>
-        <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
-        <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
-        <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
-      </ul>
-    </nav>
+    <h1>Most Downloaded Songs</h1>
+    <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
   </header>
 
-  <main>
-    <section id="most-downloaded-songs">
-      <h2>Most Downloaded Songs</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Artist</th>
-            <th>Genre</th>
-            <th>Release Date</th>
-            <th>Downloads</th>
-            <th>Preview</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="music-list">
-          <!-- Most downloaded songs will go here -->
-        </tbody>
-      </table>
-    </section>
-  </main>
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <a href="index.html">Home</a>
+      <a href="upload.html">Upload Music</a>
+      <a href="featured-artists.html">Upload Music</a>
+      <a href="songs-of-the-week.html">features of  Week</a>
+      <a href="most-downloaded-songs.html">Most Downloaded Songs</a>
+    </nav>
 
-  <footer>
-    <p>&copy; 2025 Hot Music Tracks. All rights reserved.</p>
-  </footer>
-  
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    fetch('/uploads')
-      .then(response => response.json())
-      .then(data => {
-        const musicList = document.getElementById('music-list');
+    <table id="most-downloaded-songs-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Artist</th>
+          <th>Genre</th>
+          <th>Downloads</th>
+          <th>Audio</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="most-downloaded-songs-list">
+        <!-- Most Downloaded Songs will be dynamically populated here -->
+      </tbody>
+    </table>    
+    </div>
+  </div>
 
-        // Sort music by number of downloads in descending order
-        data.sort((a, b) => b.downloads - a.downloads);
-
-        data.forEach(music => {
-          if (music.downloads > 0) { // Only show music with downloads
-            const musicRow = document.createElement('tr');
-            musicRow.innerHTML = `
-              <td>${music.title}</td>
-              <td>${music.artist}</td>
-              <td>${music.genre}</td>
-              <td>${music.releaseDate}</td>
-              <td>${music.downloads}</td>
-              <td>
-                <audio id="audio-${music.filename}" controls>
-                  <source src="uploads/${music.filename}" type="audio/mpeg">
-                  Your browser does not support the audio element.
-                </audio>
-              </td>
-              <td>
-                <button class="play-btn" onclick="playPause('${music.filename}')">Play/Pause</button>
-                <a href="/download/${music.filename}" download>Download</a>
-              </td>
-            `;
-            musicList.appendChild(musicRow);
-          }
-        });
-      })
-      .catch(error => console.error('Error fetching music:', error));
-  });
-
-  function playPause(filename) {
-    const audio = document.getElementById(`audio-${filename}`);
-    if (audio.paused) {
-      audio.play();
-    } else {
-      audio.pause();
+  <script>
+        // Toggle Sidebar Visibility
+        function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('content');
+      sidebar.classList.toggle('open');
+      content.classList.toggle('shift');
     }
-  }
-</script>
+
+    let allSongs = []; // Stores all the fetched songs
+    let currentPage = 1; // Start on page 1
+    const limit = 10; // Songs per page
+  
+    function fetchMostDownloadedSongs() {
+      // Fetch all songs from the server
+      fetch('/downloads/most')
+        .then(response => response.json())
+        .then(data => {
+          allSongs = data; // Store all songs
+          renderSongs(); // Render the first page
+          setupPaginationControls(); // Setup pagination
+        })
+        .catch(error => console.error('Error fetching Most Downloaded Songs:', error));
+    }
+  
+    function renderSongs() {
+      const songsList = document.getElementById('most-downloaded-songs-list');
+  
+      // Clear existing songs
+      songsList.innerHTML = '';
+  
+      // Calculate start and end indexes for the current page
+      const startIndex = (currentPage - 1) * limit;
+      const endIndex = startIndex + limit;
+  
+      // Get songs for the current page
+      const songsForPage = allSongs.slice(startIndex, endIndex);
+  
+      // Render songs for the current page
+      songsForPage.forEach(song => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${song.title}</td>
+          <td>${song.artist}</td>
+          <td>${song.genre}</td>
+          <td>${song.downloads}</td>
+          
+            <audio controls>
+              <source src="/files/${song.id}" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+          </td>
+          <td>
+            <a href="/download/${song.id}" class="download-btn">Download</a>
+          </td>
+        `;
+        songsList.appendChild(row);
+      });
+    }
+  
+    function setupPaginationControls() {
+      const paginationContainer = document.createElement('div');
+      paginationContainer.className = 'pagination-controls';
+      document.body.appendChild(paginationContainer);
+  
+      const totalPages = Math.ceil(allSongs.length / limit);
+  
+      // Update pagination dynamically
+      updatePaginationControls(totalPages);
+    }
+  
+    function updatePaginationControls(totalPages) {
+      const paginationContainer = document.querySelector('.pagination-controls');
+      paginationContainer.innerHTML = `
+        <button onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+        <span>Page ${currentPage} of ${totalPages}</span>
+        <button onclick="changePage(1)" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+      `;
+    }
+  
+    function changePage(direction) {
+      const totalPages = Math.ceil(allSongs.length / limit);
+  
+      currentPage += direction;
+  
+      if (currentPage < 1) currentPage = 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+  
+      renderSongs();
+      updatePaginationControls(totalPages);
+    }
+  
+    document.addEventListener('DOMContentLoaded', fetchMostDownloadedSongs);
+  </script>
+  
 </body>
 </html>

@@ -5,224 +5,99 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Top Charts</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+    /* Shared base styles omitted for brevity */
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
       background-color: #f4f4f4;
     }
 
-    header {
-      background-color: #333;
-      color: white;
-      padding: 10px 0;
-    }
-
-    nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    nav ul li {
-      position: relative;
-      margin: 0 15px;
-    }
-
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-      font-size: 18px;
-    }
-
-    nav ul li:hover .dropdown-menu {
-      display: block;
-    }
-
-    .dropdown-menu {
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background-color: #333;
-      padding: 10px;
-      z-index: 1000;
-      width: 200px;
-    }
-
-    .dropdown-menu a {
-      color: white;
-      display: block;
-      padding: 5px 10px;
-    }
-
-    main {
-      padding: 20px;
-    }
-
-    section {
-      margin-bottom: 40px;
-    }
-
-    h2 {
-      font-size: 24px;
-      color: #333;
-    }
-
-    .music-list {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .music-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: white;
-      margin: 10px 0;
-      padding: 10px;
-      border: 1px solid #ddd;
-    }
-
-    .music-item h3, .music-item p {
-      margin: 0;
-    }
-
-    .music-item audio {
-      margin-right: 10px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #333;
-      color: white;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-    }
-       /* Responsive styles for smaller phones */
-       @media (max-width: 768px) {
-      th, td {
-        font-size: 12px;
-      }
-      .play-btn, .dropdown-toggle {
-        padding: 8px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      th, td {
-        font-size: 10px;
-        padding: 5px;
-      }
-      .play-btn, .dropdown-toggle {
-        padding: 6px;
-        font-size: 10px;
-      }
-      nav ul {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      nav ul li {
-        margin: 5px 0;
-      }
+    img {
+      width: 100px;
+      height: auto;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
   <header>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="upload.html">Upload</a></li>
-        <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
-        <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
-        <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
-        <li>
-          <a href="#" class="dropdown-toggle">Menu &#x25BC;</a>
-          <div class="dropdown-menu">
-            <a href="top-charts.html">Top Charts</a>
-            <a href="featured-artists.html">Featured Artists</a>
-            <a href="music-genres.html">Music Genres</a>
-            <a href="new-releases.html">New Releases</a>
-            <a href="events-concerts.html">Events & Concerts</a>
-            <a href="music-news.html">Music News</a>
-            <a href="playlists.html">Playlists</a>
-            <a href="artist-interviews.html">Artist Interviews</a>
-            <a href="music-reviews.html">Music Reviews</a>
-            <a href="community-forum.html">Community Forum</a>
-          </div>
-        </li>
-      </ul>
-    </nav>
+    <h1>Top Charts</h1>
+    <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
   </header>
 
-  <main>
-    <section id="top-charts">
-      <h2>Top Charts</h2>
-      <div class="music-list">
-        <!-- Top charts music entries will go here -->
-      </div>
-    </section>
-  </main>
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <a href="index.html">Home</a>
+      <a href="upload.html">Upload Music</a>
+      <a href="songs-of-the-week.html">Songs of the Week</a>
+      <a href="most-downloaded-songs.html">Most Downloaded Songs</a>
+    </nav>
 
-  <footer>
-    <p>&copy; 2025 Hot Music Tracks. All rights reserved.</p>
-  </footer>
+    <div class="content" id="content">
+      <h2>Top Tracks</h2>
+      <table id="charts-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Genre</th>
+            <th>Downloads</th>
+            <th>Artwork</th>
+            <th>Audio</th>
+          </tr>
+        </thead>
+        <tbody id="charts-list">
+          <!-- Top Charts entries will be dynamically rendered here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('content');
+      sidebar.classList.toggle('open');
+      content.classList.toggle('shift');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      fetch('/uploads')
+      fetch('/top-charts')
         .then(response => response.json())
         .then(data => {
-          const musicList = document.querySelector('.music-list');
-          const threeMonthsAgo = new Date();
-          threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+          const chartsList = document.getElementById('charts-list');
 
-          // Sort music by number of downloads in descending order
-          data.sort((a, b) => b.downloads - a.downloads);
-
-          data.forEach(music => {
-            const uploadDate = new Date(music.uploadDate);
-            if (uploadDate >= threeMonthsAgo) {
-              const musicItem = document.createElement('div');
-              musicItem.classList.add('music-item');
-              musicItem.innerHTML = `
-                <div>
-                  <h3>${music.title}</h3>
-                  <p>Artist: ${music.artist}</p>
-                  <p>Genre: ${music.genre}</p>
-                  <p>Release Date: ${music.releaseDate}</p>
-                  <p>Downloads: ${music.downloads}</p>
-                </div>
-                <div>
-                  <audio id="audio-${music.filename}" controls>
-                    <source src="uploads/${music.filename}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                  </audio>
-                  <button onclick="playPause('${music.filename}')">Play/Pause</button>
-                  <a href="/download/${music.filename}" download>Download</a>
-                </div>
-              `;
-              musicList.appendChild(musicItem);
-            }
+          data.forEach(song => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${song.title}</td>
+              <td>${song.artist}</td>
+              <td>${song.genre}</td>
+              <td>${song.downloads}</td>
+              <td><img src="/files/${song.id}?type=artwork" alt="${song.title}"></td>
+              <td>
+                <audio controls>
+                  <source src="/files/${song.id}" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                </audio>
+              </td>
+            `;
+            chartsList.appendChild(row);
           });
         })
-        .catch(error => console.error('Error fetching music:', error));
+        .catch(error => console.error('Error fetching Top Charts:', error));
     });
-
-    function playPause(filename) {
-      const audio = document.getElementById(`audio-${filename}`);
-      if (audio.paused) {
-        audio.play();
-      } else {
-        audio.pause();
-      }
-    }
   </script>
 </body>
 </html>

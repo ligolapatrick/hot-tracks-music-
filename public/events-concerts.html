@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recently Listened Songs</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .controls button:hover {
+      background-color: #45a049;
+    }
+
+    .song-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .song-card {
+      width: 250px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 20px;
+    }
+
+    .song-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .song-card h3 {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    .song-card p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .song-card audio {
+      width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Recently Listened Songs</h1>
+  </header>
+
+  <div class="container">
+    <!-- Playback Controls -->
+    <div class="controls">
+      <button onclick="shuffleSongs()">Shuffle All</button>
+    </div>
+
+    <!-- Song List -->
+    <div class="song-list" id="recently-listened">
+      <!-- Songs will be dynamically loaded here -->
+    </div>
+  </div>
+
+  <script>
+    let recentlyListenedSongs = []; // Store recently listened songs
+    let isShuffle = false; // Shuffle state
+
+    // Fetch recently listened songs from the server
+    function fetchRecentlyListened() {
+      fetch('/recently-listened')
+        .then(response => response.json())
+        .then(songs => {
+          recentlyListenedSongs = songs;
+          renderSongs();
+        })
+        .catch(error => console.error('Error fetching recently listened songs:', error));
+    }
+
+    // Render the list of recently listened songs
+    function renderSongs() {
+      const songList = document.getElementById('recently-listened');
+      songList.innerHTML = ''; // Clear existing songs
+
+      recentlyListenedSongs.forEach((song, index) => {
+        const songCard = document.createElement('div');
+        songCard.classList.add('song-card');
+        songCard.innerHTML = `
+          <img src="/files/${song.id}?type=artwork" alt="${song.title}">
+          <h3>${song.title}</h3>
+          <p>${song.artist}</p>
+          <audio id="audio-${index}" controls>
+            <source src="/files/${song.id}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        `;
+        songList.appendChild(songCard);
+      });
+    }
+
+    // Shuffle and play all songs
+    function shuffleSongs() {
+      isShuffle = true;
+
+      // Shuffle the song array
+      const shuffledSongs = [...recentlyListenedSongs].sort(() => Math.random() - 0.5);
+
+      shuffledSongs.forEach((song, index) => {
+        const audioElement = document.getElementById(`audio-${index}`);
+        audioElement.play();
+
+        // Automatically move to the next song when one ends
+        audioElement.onended = () => {
+          if (index + 1 < shuffledSongs.length) {
+            const nextAudioElement = document.getElementById(`audio-${index + 1}`);
+            nextAudioElement.play();
+          }
+        };
+      });
+    }
+
+    // Fetch songs on page load
+    document.addEventListener('DOMContentLoaded', fetchRecentlyListened);
+  </script>
+</body>
+</html>

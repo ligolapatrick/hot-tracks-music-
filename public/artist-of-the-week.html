@@ -3,74 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Artist of the Week</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <title>Top Artists</title>
   <style>
-       body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-
-    header {
-      background-color: #333;
-      color: white;
-      padding: 10px 0;
-    }
-
-    nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    nav ul li {
-      position: relative;
-      margin: 0 15px;
-    }
-
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-      font-size: 18px;
-    }
-
-    nav ul li:hover .dropdown-menu {
-      display: block;
-    }
-
-    .dropdown-menu {
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background-color: #333;
-      padding: 10px;
-      z-index: 1000;
-      width: 200px; /* Increase dropdown width */
-    }
-
-    .dropdown-menu a {
-      color: white;
-      display: block;
-      padding: 5px 10px;
-    }
-
-    main {
-      padding: 20px;
-    }
-
+    /* Shared base styles omitted for brevity */
     table {
-      width: 100%;
+      width: 90%;
+      margin: 20px auto;
       border-collapse: collapse;
-      margin-top: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     th, td {
-      padding: 10px;
+      padding: 15px;
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
@@ -78,108 +22,63 @@
     th {
       background-color: #f4f4f4;
     }
-
-    audio {
-      width: 100%;
-    }
-
-    .play-btn {
-      margin: 5px;
-    }
   </style>
 </head>
 <body>
   <header>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="upload.html">Upload</a></li>
-        <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
-        <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
-        <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
-      </ul>
-    </nav>
+    <h1>Top Artists</h1>
+    <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
   </header>
 
-  <main>
-    <section id="artist-of-the-week">
-      <h2>Hot Songs</h2>
-      <table>
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <a href="index.html">Home</a>
+      <a href="upload.html">Upload Music</a>
+      <a href="songs-of-the-week.html">Songs of the Week</a>
+      <a href="most-downloaded-songs.html">Most Downloaded Songs</a>
+    </nav>
+
+    <div class="content" id="content">
+      <h2>Top Artists</h2>
+      <table id="artists-table">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Genre</th>
-            <th>Release Date</th>
-            <th>Downloads</th>
-            <th>Preview</th>
-            <th>Action</th>
+            <th>Artist</th>
+            <th>Total Downloads</th>
           </tr>
         </thead>
-        <tbody id="music-list">
-          <!-- Artist of the week songs will go here -->
+        <tbody id="artists-list">
+          <!-- Top Artists entries will be dynamically rendered here -->
         </tbody>
       </table>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Hot Music Tracks. All rights reserved.</p>
-  </footer>
+    </div>
+  </div>
 
   <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('content');
+      sidebar.classList.toggle('open');
+      content.classList.toggle('shift');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-      fetch('/uploads')
+      fetch('/top-artists')
         .then(response => response.json())
         .then(data => {
-          const musicList = document.getElementById('music-list');
+          const artistsList = document.getElementById('artists-list');
 
-          // Find the artist with the most downloads
-          const artistDownloads = {};
-          data.forEach(music => {
-            if (music.downloads > 0) {
-              if (!artistDownloads[music.artist]) {
-                artistDownloads[music.artist] = 0;
-              }
-              artistDownloads[music.artist] += music.downloads;
-            }
-          });
-
-          const artistOfTheWeek = Object.keys(artistDownloads).reduce((a, b) => artistDownloads[a] > artistDownloads[b] ? a : b, '');
-
-          data.forEach(music => {
-            if (music.artist === artistOfTheWeek) {
-              const musicRow = document.createElement('tr');
-              musicRow.innerHTML = `
-                <td>${music.title}</td>
-                <td>${music.genre}</td>
-                <td>${music.releaseDate}</td>
-                <td>${music.downloads}</td>
-                <td>
-                  <audio id="audio-${music.filename}" controls>
-                    <source src="uploads/${music.filename}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                  </audio>
-                </td>
-                <td>
-                  <button class="play-btn" onclick="playPause('${music.filename}')">Play/Pause</button>
-                  <a href="/download/${music.filename}" download>Download</a>
-                </td>
-              `;
-              musicList.appendChild(musicRow);
-            }
+          data.forEach(artist => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${artist.artist}</td>
+              <td>${artist.totalDownloads}</td>
+            `;
+            artistsList.appendChild(row);
           });
         })
-        .catch(error => console.error('Error fetching music:', error));
+        .catch(error => console.error('Error fetching Top Artists:', error));
     });
-
-    function playPause(filename) {
-      const audio = document.getElementById(`audio-${filename}`);
-      if (audio.paused) {
-        audio.play();
-      } else {
-        audio.pause();
-      }
-    }
   </script>
 </body>
 </html>

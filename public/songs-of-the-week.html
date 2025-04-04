@@ -4,258 +4,337 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Songs of the Week</title>
-  <link rel="stylesheet" href="css/styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      background-color: #f9f9f9;
+      color: #333;
     }
 
     header {
       background-color: #333;
       color: white;
+      text-align: center;
       padding: 10px 0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
-    nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .container {
       display: flex;
-      justify-content: space-between;
     }
 
-    nav ul li {
-      position: relative;
-      margin: 0 15px;
-    }
-
-    nav ul li a {
+    .sidebar {
+      width: 250px;
+      background-color: #222;
       color: white;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: -250px;
+      padding-top: 20px;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar a {
       text-decoration: none;
+      color: white;
+      padding: 15px 20px;
       font-size: 18px;
-    }
-
-    nav ul li:hover .dropdown-menu {
       display: block;
+      transition: background-color 0.3s;
     }
 
-    .dropdown-menu {
+    .sidebar a:hover {
+      background-color: #444;
+    }
+
+    .content {
+      margin-left: 0;
+      padding: 20px;
+      width: 100%;
+      transition: margin-left 0.3s ease;
+    }
+
+    .content.shift {
+      margin-left: 250px;
+    }
+
+    /* Menu Button */
+    .menu-btn {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 18px;
+      cursor: pointer;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1001;
+    }
+
+    .menu-btn:hover {
+      background-color: #444;
+    }
+
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    img {
+      width: 100px;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    audio {
+      width: 100%;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
       display: none;
       position: absolute;
-      top: 100%;
-      right: 0;
-      background-color: #333;
+      background-color: #f9f9f9;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       padding: 10px;
-      z-index: 1000;
-      width: 200px; /* Increase dropdown width */
+      z-index: 1;
     }
 
-    .dropdown-menu a {
-      color: white;
+    .dropdown:hover .dropdown-content {
       display: block;
-      padding: 5px 10px;
     }
 
-    main {
-      padding: 20px;
-    }
-
-    section {
-      margin-bottom: 40px;
-    }
-
-    h2 {
-      font-size: 24px;
-      color: #333;
-    }
-
-    .music-list {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .music-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: white;
-      margin: 10px 0;
-      padding: 10px;
-      border: 1px solid #ddd;
-    }
-
-    .music-item h3, .music-item p {
-      margin: 0;
-    }
-
-    .music-item audio {
-      margin-right: 10px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #333;
-      color: white;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-    }
-    body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-  }
-  
-  header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 1em;
-    text-align: center;
-  }
-  
-  nav {
-    background-color: #333;
-  }
-  
-  nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-  }
-  
-  nav ul li {
-    margin: 0 1em;
-  }
-  
-  nav ul li a {
-    color: white;
-    text-decoration: none;
-    padding: 0.5em 1em;
-    display: block;
-  }
-  
-  nav ul li a:hover {
-    background-color: #4CAF50;
-  }
-     /* Responsive styles for smaller phones */
-     @media (max-width: 768px) {
-      th, td {
-        font-size: 12px;
+    /* Media Queries */
+    @media (max-width: 768px) {
+      table {
+        font-size: 14px;
       }
-      .play-btn, .dropdown-toggle {
-        padding: 8px;
+
+      .sidebar {
+        width: 200px;
+      }
+
+      .content.shift {
+        margin-left: 200px;
       }
     }
 
     @media (max-width: 480px) {
+      table {
+        font-size: 12px;
+      }
+
       th, td {
-        font-size: 10px;
-        padding: 5px;
+        padding: 10px;
       }
-      .play-btn, .dropdown-toggle {
-        padding: 6px;
-        font-size: 10px;
-      }
-      nav ul {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      nav ul li {
-        margin: 5px 0;
+
+      img {
+        width: 80px;
       }
     }
+    .pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  gap: 10px;
+}
+
+.pagination-controls button {
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-controls button:hover:not([disabled]) {
+  background-color: #45a049;
+}
+
+.pagination-controls button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination-controls span {
+  font-size: 16px;
+  color: #333;
+}
+
   </style>
 </head>
 <body>
   <header>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="upload.html">Upload</a></li>
-        <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
-        <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
-        <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
-        <li>
-          <a href="#" class="dropdown-toggle">Menu &#x25BC;</a>
-          <div class="dropdown-menu">
-            <a href="top-charts.html">Top Charts</a>
-            <a href="featured-artists.html">Featured Artists</a>
-            <a href="music-genres.html">Music Genres</a>
-            <a href="new-releases.html">New Releases</a>
-            <a href="searching.html">search</a>
-          </div>
-        </li>
-      </ul>
-    </nav>
+    <h1>Songs of the Week</h1>
+    <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
   </header>
 
-  <main>
-    <section id="songs-of-the-week">
-      <h2>Songs of the Week</h2>
-      <div class="music-list">
-        <!-- Songs of the week will go here -->
-      </div>
-    </section>
-  </main>
+  <div class="container">
+    <nav class="sidebar" id="sidebar">
+      <a href="index.html">Home</a>
+      <a href="upload.html">Upload Music</a>
+      <a href="songs-of-the-week.html">Songs of the Week</a>
+      <a href="most-downloaded-songs.html">Most Downloaded Songs</a>
+      <a href="library.html">My Library</a>
+      <a href="playlists.html">Playlists</a>
+      <a href="music-genres.html">Genres</a>
+      <a href="favorites.html">Favorites</a>
+      <a href="login.html">Login</a>
+      <a href="register.html">Register</a>
+    </nav>
 
-  <footer>
-    <p>&copy; 2025 Hot Music Tracks. All rights reserved.</p>
-  </footer>
+    <div class="content" id="content">
+      <h2>Top Songs from the Past Week</h2>
+      <table id="songs-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Genre</th>
+            <th>Downloads</th>
+            <th>Audio</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="songs-list">
+          <!-- Songs of the Week entries will be dynamically rendered here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      fetch('/uploads')
-        .then(response => response.json())
-        .then(data => {
-          const musicList = document.querySelector('.music-list');
-          const fourteenDaysAgo = new Date();
-          fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
-
-          data.forEach(music => {
-            const uploadDate = new Date(music.uploadDate);
-            if (uploadDate >= fourteenDaysAgo) {
-              const musicItem = document.createElement('div');
-              musicItem.classList.add('music-item');
-              musicItem.innerHTML = `
-                <div>
-                  <h3>${music.title}</h3>
-                  <p>Artist: ${music.artist}</p>
-                  <p>Genre: ${music.genre}</p>
-                  <p>Release Date: ${music.releaseDate}</p>
-                  <p>Downloads: ${music.downloads}</p>
-                </div>
-                <div>
-                  <audio id="audio-${music.filename}" controls>
-                    <source src="uploads/${music.filename}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                  </audio>
-                  <button onclick="playPause('${music.filename}')">Play/Pause</button>
-                  <a href="/download/${music.filename}" download>Download</a>
-                </div>
-              `;
-              musicList.appendChild(musicItem);
-            }
-          });
-        })
-        .catch(error => console.error('Error fetching music:', error));
-    });
-
-    function playPause(filename) {
-      const audio = document.getElementById(`audio-${filename}`);
-      if (audio.paused) {
-        audio.play();
-      } else {
-        audio.pause();
-      }
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const content = document.getElementById('content');
+      sidebar.classList.toggle('open');
+      content.classList.toggle('shift');
     }
-  </script>
+ 
+  let allSongs = []; // Stores all fetched songs
+  let currentPage = 1; // Start on page 1
+  const limit = 10; // Number of songs per page
+
+  function fetchSongsOfTheWeek() {
+    // Fetch all songs from the server
+    fetch('/songs-of-the-week')
+      .then(response => response.json())
+      .then(data => {
+        allSongs = data; // Store all songs
+        renderSongs(); // Render the first page
+        setupPaginationControls(); // Setup pagination controls
+      })
+      .catch(error => console.error('Error fetching Songs of the Week:', error));
+  }
+
+  function renderSongs() {
+    const songsList = document.getElementById('songs-list');
+
+    // Clear existing songs
+    songsList.innerHTML = '';
+
+    // Calculate start and end indexes for the current page
+    const startIndex = (currentPage - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    // Get songs for the current page
+    const songsForPage = allSongs.slice(startIndex, endIndex);
+
+    // Render songs for the current page
+    songsForPage.forEach(song => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${song.title}</td>
+        <td>${song.artist}</td>
+        <td>${song.genre}</td>
+        <td>${song.downloads}</td>
+        <td>
+          <audio controls>
+            <source src="/files/${song.id}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        </td>
+        <td>
+          <div class="dropdown">
+            <button>Options</button>
+            <div class="dropdown-content">
+              <button onclick="addToPlaylist(${song.id})">Add to Playlist</button>
+              <button onclick="toggleFavorite(${song.id})">Toggle Favorite</button>
+              <a href="/download/${song.id}" class="download-btn">Download</a>
+            </div>
+          </div>
+        </td>
+      `;
+      songsList.appendChild(row);
+    });
+  }
+
+  function setupPaginationControls() {
+    const paginationContainer = document.createElement('div');
+    paginationContainer.className = 'pagination-controls';
+    document.body.appendChild(paginationContainer);
+
+    const totalPages = Math.ceil(allSongs.length / limit);
+
+    // Update pagination dynamically
+    updatePaginationControls(totalPages);
+  }
+
+  function updatePaginationControls(totalPages) {
+    const paginationContainer = document.querySelector('.pagination-controls');
+    paginationContainer.innerHTML = `
+      <button onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+      <span>Page ${currentPage} of ${totalPages}</span>
+      <button onclick="changePage(1)" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+    `;
+  }
+
+  function changePage(direction) {
+    const totalPages = Math.ceil(allSongs.length / limit);
+
+    currentPage += direction;
+
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    renderSongs();
+    updatePaginationControls(totalPages);
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchSongsOfTheWeek);
+</script>
+
 </body>
 </html>

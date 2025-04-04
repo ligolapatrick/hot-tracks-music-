@@ -20,6 +20,11 @@
   </header>
 
   <main>
+    <section id="search-section">
+      <h2>Search Songs</h2>
+      <input type="text" id="search-bar" placeholder="Search by title, artist, or genre">
+    </section>
+
     <section id="new-releases">
       <h2>New Releases</h2>
       <div class="music-list">
@@ -38,40 +43,57 @@
         .then(response => response.json())
         .then(data => {
           const musicList = document.querySelector('.music-list');
+          const searchBar = document.getElementById('search-bar');
           const oneMonthAgo = new Date();
           oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-          data.forEach(music => {
+          const filteredData = data.filter(music => {
             const releaseDate = new Date(music.releaseDate);
-            if (releaseDate >= oneMonthAgo) {
-              const musicDiv = document.createElement('div');
-              musicDiv.innerHTML = `
-                <h3>${music.title}</h3>
-                <p>Artist: ${music.artist}</p>
-                <p>Genre: ${music.genre}</p>
-                <p>Release Date: ${music.releaseDate}</p>
-                <p>Downloads: ${music.downloads}</p>
-                <audio id="audio-${music.filename}" controls>
-                  <source src="uploads/${music.filename}" type="audio/mpeg">
-                  Your browser does not support the audio element.
-                </audio>
-                <button onclick="playPause('${music.filename}')">Play/Pause</button>
-                <a href="/download/${music.filename}" download>Download</a>
-              `;
-              musicList.appendChild(musicDiv);
-            }
+            return releaseDate >= oneMonthAgo;
           });
+
+          const renderMusicList = (filterTerm = '') => {
+            musicList.innerHTML = '';
+            filteredData
+              .filter(music => {
+                const lowerCaseFilterTerm = filterTerm.toLowerCase();
+                return (
+                  music.title.toLowerCase().includes(lowerCaseFilterTerm) ||
+                  music.artist.toLowerCase().includes(lowerCaseFilterTerm) ||
+                  music.genre.toLowerCase().includes(lowerCaseFilterTerm)
+                );
+              })
+              .forEach(music => {
+                const musicDiv = document.createElement('div');
+                musicDiv.innerHTML = `
+                  <h3>${music.title}</h3>
+                  <p>Artist: ${music.artist}</p>
+                  <p>Genre: ${music.genre}</p>
+                  <p>Release Date: ${music.releaseDate}</p>
+                  <p>Downloads: ${music.downloads}</p>
+                  <audio id="audio-${music.filename}" controls>
+                    <source src="uploads/${music.filename}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                  </audio>
+                  <button onclick="playPause('${music.filename}')">Play/Pause</button>
+                  <a href="/download/${music.filename}" download>Download</a>
+                `;
+                musicList.appendChild(musicDiv);
+              });
+          };
+
+          searchBar.addEventListener('input', (event) => {
+            renderMusicList(event.target.value);
+          });
+
+          renderMusicList(); // Initial render
         })
         .catch(error => console.error('Error fetching music:', error));
     });
 
     function playPause(filename) {
       const audio = document.getElementById(`audio-${filename}`);
-      if (audio.paused) {
-        audio.play();
-      } else {
-        audio.pause();
-      }
+      audio.paused ? audio.play() : audio.pause();
     }
   </script>
 </body>

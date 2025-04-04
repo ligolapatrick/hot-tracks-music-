@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Analytics</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .analytics-section {
+      margin-bottom: 20px;
+    }
+
+    .analytics-section h3 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      font-size: 16px;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Your Music Analytics</h1>
+  </header>
+
+  <div class="container">
+    <div class="analytics-section">
+      <h3>Most Played Genres</h3>
+      <ul id="most-played-genres">
+        <!-- Most played genres will be dynamically rendered here -->
+      </ul>
+    </div>
+
+    <div class="analytics-section">
+      <h3>Most Played Songs</h3>
+      <ul id="most-played-songs">
+        <!-- Most played songs will be dynamically rendered here -->
+      </ul>
+    </div>
+
+    <div class="analytics-section">
+      <h3>Favorite Artists</h3>
+      <ul id="favorite-artists">
+        <!-- Favorite artists will be dynamically rendered here -->
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch(`/user-analytics/${userId}`) // Replace userId dynamically
+        .then(response => response.json())
+        .then(data => {
+          const genresContainer = document.getElementById('most-played-genres');
+          const songsContainer = document.getElementById('most-played-songs');
+          const artistsContainer = document.getElementById('favorite-artists');
+
+          // Render genres
+          data.mostPlayedGenres.forEach(genre => {
+            const li = document.createElement('li');
+            li.textContent = `${genre.genre}: ${genre.playCount} plays`;
+            genresContainer.appendChild(li);
+          });
+
+          // Render songs
+          data.mostPlayedSongs.forEach(song => {
+            const li = document.createElement('li');
+            li.textContent = `${song.Music.title} by ${song.Music.artist}`;
+            songsContainer.appendChild(li);
+          });
+
+          // Render artists
+          data.favoriteArtists.forEach(artist => {
+            const li = document.createElement('li');
+            li.textContent = `${artist.artist}: ${artist.frequency} songs listened`;
+            artistsContainer.appendChild(li);
+          });
+        })
+        .catch(error => console.error('Error fetching user analytics:', error));
+    });
+  </script>
+</body>
+</html>

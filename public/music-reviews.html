@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommendations</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 90%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    audio {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Recommended Songs for You</h1>
+  </header>
+
+  <table id="recommendations-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Artist</th>
+        <th>Genre</th>
+        <th>Audio</th>
+      </tr>
+    </thead>
+    <tbody id="recommendations">
+      <!-- Recommended songs will be dynamically populated -->
+    </tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const userId = 1; // Replace with dynamic user ID
+
+      fetch(`/recommendations/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          const recommendationsTable = document.getElementById('recommendations');
+          recommendationsTable.innerHTML = ''; // Clear existing recommendations
+
+          data.forEach(song => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${song.title}</td>
+              <td>${song.artist}</td>
+              <td>${song.genre}</td>
+              <td>
+                <audio controls>
+                  <source src="/files/${song.id}" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                </audio>
+              </td>
+            `;
+            recommendationsTable.appendChild(row);
+          });
+        })
+        .catch(error => console.error('Error fetching recommendations:', error));
+    });
+  </script>
+</body>
+</html>

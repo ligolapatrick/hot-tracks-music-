@@ -4,167 +4,149 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload Music</title>
-  <link rel="stylesheet" href="css/styles.css">
   <style>
+    /* General Styles */
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
       margin: 0;
       padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
     }
 
     header {
       background-color: #333;
       color: white;
-      padding: 10px 0;
-    }
-
-    nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    nav ul li {
-      margin: 0 15px;
-    }
-
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-      font-size: 18px;
+      text-align: center;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
       padding: 20px;
-    }
-
-    h2 {
-      font-size: 24px;
-      color: #333;
     }
 
     form {
+      width: 100%;
+      max-width: 500px;
       background-color: white;
       padding: 20px;
-      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    label {
+    form label {
       display: block;
-      margin: 10px 0 5px;
+      margin-bottom: 5px;
+      font-weight: bold;
     }
 
-    input[type="text"],
-    input[type="date"],
-    input[type="file"],
-    select {
+    form input[type="text"],
+    form input[type="date"],
+    form input[type="file"],
+    form button {
       width: 100%;
+      margin-bottom: 15px;
       padding: 10px;
-      margin-bottom: 10px;
       border: 1px solid #ddd;
       border-radius: 5px;
+      font-size: 16px;
     }
 
-    button {
-      background-color: #333;
+    form button {
+      background-color: #4CAF50;
       color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
 
-    @media (max-width: 600px) {
-      nav ul {
-        flex-direction: column;
-        align-items: center;
+    form button:hover {
+      background-color: #45a049;
+    }
+
+    /* Responsive Design for Smaller Screens */
+
+    /* Tablets (max-width: 768px) */
+    @media (max-width: 768px) {
+      form {
+        width: 90%;
+        padding: 15px;
       }
 
-      nav ul li {
-        margin: 5px 0;
+      form input[type="text"],
+      form input[type="date"],
+      form input[type="file"],
+      form button {
+        font-size: 14px;
+      }
+    }
+
+    /* Mobile (max-width: 480px) - iPhone 6 and similar */
+    @media (max-width: 480px) {
+      header {
+        font-size: 18px;
+        padding: 10px;
+      }
+
+      main {
+        padding: 10px;
+      }
+
+      form {
+        width: 100%;
+        padding: 10px;
+      }
+
+      form label {
+        font-size: 14px;
+      }
+
+      form input[type="text"],
+      form input[type="date"],
+      form input[type="file"],
+      form button {
+        font-size: 12px;
+        padding: 8px;
+      }
+
+      form button {
+        padding: 10px;
+        font-size: 14px;
       }
     }
   </style>
 </head>
 <body>
   <header>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="songs-of-the-week.html">Songs of the Week</a></li>
-        <li><a href="most-downloaded-songs.html">Most Downloaded Songs</a></li>
-        <li><a href="artist-of-the-week.html">Artist of the Week</a></li>
-        <li><a href="top-charts.html">Top Charts</a></li>
-      </ul>
-    </nav>
+    <h1>Upload Music</h1>
   </header>
-
+  
   <main>
-    <h2>Upload Music</h2>
     <form action="/upload" method="POST" enctype="multipart/form-data">
-      <label for="title">Title</label>
+      <label for="title">Title:</label>
       <input type="text" id="title" name="title" required>
 
-      <label for="artist">Artist</label>
+      <label for="artist">Artist:</label>
       <input type="text" id="artist" name="artist" required>
 
-      <label for="genre">Genre</label>
-      <select id="genre" name="genre" required>
-        <option value="Pop">Pop</option>
-        <option value="Rock">Rock</option>
-        <option value="Hip-Hop">Hip-Hop</option>
-        <option value="Jazz">Jazz</option>
-        <option value="Classical">Classical</option>
-        <option value="Gospel">Gospel</option>
-        <option value="Country">Country</option>
-        <option value="R&B">R&B</option>
-        <option value="Reggae">Reggae</option>
-        <option value="Blues">Blues</option>
-        <option value="Afro">Afro</option>
-        <option value="Amapiano">Amapiano</option>
-      </select>
+      <label for="genre">Genre:</label>
+      <input type="text" id="genre" name="genre">
 
-      <label for="releaseDate">Release Date</label>
+      <label for="releaseDate">Release Date:</label>
       <input type="date" id="releaseDate" name="releaseDate" required>
 
-      <label for="musicFile">Music File (MP3 or WAV)</label>
-      <input type="file" id="musicFile" name="musicFile" accept="audio/mpeg, audio/wav" required>
+      <label for="musicFile">Music File:</label>
+      <input type="file" id="musicFile" name="musicFile" accept="audio/*" required>
 
-      <label for="artwork">Artwork (JPEG or PNG)</label>
-      <input type="file" id="artwork" name="artwork" accept="image/jpeg, image/png">
+      <label for="artwork">Artwork File:</label>
+      <input type="file" id="artwork" name="artwork" accept="image/*">
 
       <button type="submit">Upload</button>
     </form>
   </main>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.querySelector('form');
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-  
-        const formData = new FormData(form);
-        try {
-          const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
-          });
-  
-          if (response.ok) {
-            alert('Upload successful!');
-            form.reset(); // Clear the form
-          } else {
-            const errorText = await response.text();
-            alert('Upload failed: ' + errorText);
-          }
-        } catch (error) {
-          console.error('Error uploading file:', error);
-          alert('Upload failed: ' + error.message);
-        }
-      });
-    });
-  </script>  
 </body>
 </html>
